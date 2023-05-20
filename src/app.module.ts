@@ -7,12 +7,14 @@ import { LibraryModule } from './library/library.module';
 @Module({
   imports: [
     MongooseModule.forRoot(
-      'mongodb+srv://brayansilva82151:opTg1lUyENq1HjPI@librarycatalogcluster.mrlesrh.mongodb.net/libraryCatalog',
+      'mongodb://mongo:iSjqV11Jvmw9pOlPoJMI@containers-us-west-192.railway.app:5660',
+      {
+        dbName: 'library-db',
+      },
     ),
     UserModule,
     LibraryModule,
     CommonModule,
   ],
 })
-
 export class AppModule {}
