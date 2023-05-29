@@ -10,6 +10,7 @@ import { Model } from 'mongoose';
 import { Library } from './entities/library.entity';
 import cheerio from 'cheerio';
 import { AxiosAdapter } from 'src/common/adapters/axios.adapter';
+import { HostService } from '../host/host.service';
 
 @Injectable()
 export class LibraryService {
@@ -17,25 +18,32 @@ export class LibraryService {
     @InjectModel(Library.name)
     private readonly libraryModel: Model<Library>,
     private readonly http: AxiosAdapter,
+    private readonly hostService: HostService
   ) {}
 
   findAll() {
     return this.libraryModel.find().select('-__v');
   }
 
+  async getHostUrl(id:string) {
+    const url = await (await this.hostService.findOne(id)).hostUrl
+    console.log(url);
+    return url;
+  }
+
   async getCataloguePolijic(finalKeyWord: string) {
-    const hostUrl = 'http://prometeo-politecnicojic.hosted.exlibrisgroup.com';
+    return new Promise(async (resolve, reject) => {
+      if (!finalKeyWord) {
+        return reject('Invalid data');
+      }
+    const hostUrl = await this.getHostUrl('6473f1c10bd4cdc48deb5179');
     const url =
       hostUrl +
       '/F/?func=find-b&request=' +
       finalKeyWord +
       '&find_code=WRD&adjacent=N&x=32&y=94=WFM&filter_request_4=&filter_code_5=WSL&filter_request_5=';
-    const data = await this.http.get<any>(url);
+    const data = await this.http.get<any>(url).catch(error => resolve('No hay datos para la busqueda realizada'));
 
-    return new Promise(async (resolve, reject) => {
-      if (!finalKeyWord) {
-        return reject('Invalid data');
-      }
       const nameU = 'poli-jic';
       const universidad = 'Politécnico Colombiano Jaime Isaza Cadavid';
       const $ = cheerio.load(data);
@@ -112,7 +120,7 @@ export class LibraryService {
 
       const nameU = 'udea';
       const universidad = 'Universidad de Antioquia';
-      const data = await this.http.get<any>(url);
+      const data = await this.http.get<any>(url).catch(error => resolve('No hay datos para la busqueda realizada'));
       const $ = cheerio.load(data);
       const records = [];
       const totalRecords = $('.number-of-hits font').text();
@@ -163,12 +171,12 @@ export class LibraryService {
         hostUrl +
         '/cgi-olib/?keyword=' +
         finalKeyWord +
-        '&session=46810913&nh=20&infile=presearch.glue';
+        '&session=77447134&nh=20&infile=presearch.glue';
 
       const nameU = 'itm';
       const universidad = 'Instituto Tecnológico Metropolitano';
 
-      const data = await this.http.get<any>(url);
+      const data = await this.http.get<any>(url).catch(error => resolve('No hay datos para la busqueda realizada'));
       const $ = cheerio.load(data);
       const records = [];
       const totalRecords = $('.number-of-hits font').text();
@@ -225,7 +233,7 @@ export class LibraryService {
       const universidad = 'Universidad de San Buenaventura';
 
       try {
-        const data = await this.http.get<any>(url);
+        const data = await this.http.get<any>(url).catch(error => resolve('No hay datos para la busqueda realizada'));
         const $ = cheerio.load(data);
         const records = [];
         const totalRecords = $('.number-of-hits font').text();
@@ -282,7 +290,7 @@ export class LibraryService {
       const universidad =
         'Institución Universitaria Politécnico Grancolombiano';
 
-      const data = await this.http.get<any>(url);
+      const data = await this.http.get<any>(url).catch(error => resolve('No hay datos para la busqueda realizada'));
       const $ = cheerio.load(data);
       const records = [];
       const totalR = $('#numresults strong').text();
@@ -336,18 +344,18 @@ export class LibraryService {
         return reject('Invalid data');
       }
       const hostUrl =
-        'http://aplicaciones.ceipa.edu.co/biblioteca/biblio_digital/catalogo/';
+        'http://aplicaciones.ceipa.edu.co/biblioteca/biblio_digital/catalogo';
 
       const url =
         hostUrl +
-        'informe.jsp?cr1=T&cr2=A&cr3=M&con1=0&con2=0&con3=' +
+        '/informe.jsp?cr1=T&cr2=A&cr3=M&con1=0&con2=0&con3=' +
         finalKeyWord +
         '&cole=Todos&ano=&ubi=Todos&idi=Todos';
 
       const nameU = 'ceipa';
       const universidad = 'Ceipa';
 
-      const data = await this.http.get<any>(url);
+      const data = await this.http.get<any>(url).catch(error => resolve('No hay datos para la busqueda realizada'));
       const $ = cheerio.load(data);
       const records = [];
 
@@ -410,7 +418,7 @@ export class LibraryService {
 
       const nameU = 'colegiatura';
       const universidad = 'COLEGIATURA';
-      const data = await this.http.get<any>(url);
+      const data = await this.http.get<any>(url).catch(error => resolve('No hay datos para la busqueda realizada'));
       const $ = cheerio.load(data);
       const records = [];
       const totalR = $('#numresults strong').text();
@@ -473,7 +481,7 @@ export class LibraryService {
 
       const nameU = 'unal';
       const universidad = 'Universidad Nacional de Colombia';
-      const data = await this.http.get<any>(url);
+      const data = await this.http.get<any>(url).catch(error => resolve('No hay datos para la busqueda realizada'));
       const $ = cheerio.load(data);
       const records = [];
       const totalRecords = $('.text3[width="20%"]')

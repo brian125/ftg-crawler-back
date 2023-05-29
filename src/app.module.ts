@@ -3,6 +3,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { UserModule } from './user/user.module';
 import { CommonModule } from './common/common.module';
 import { LibraryModule } from './library/library.module';
+import { HostModule } from './host/host.module';
 
 @Module({
   imports: [
@@ -11,6 +12,7 @@ import { LibraryModule } from './library/library.module';
     ),
     UserModule,
     LibraryModule,
+    HostModule,
     CommonModule,
   ],
 })

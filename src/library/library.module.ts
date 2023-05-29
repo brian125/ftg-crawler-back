@@ -5,12 +5,15 @@ import { LibraryController } from './library.controller';
 import { Library, LibrarySchema } from './entities/library.entity';
 import { LibraryService } from './library.service';
 import { CommonModule } from 'src/common/common.module';
+import { HostService } from 'src/host/host.service';
+import { HostModule } from 'src/host/host.module';
 
 @Module({
   controllers: [LibraryController],
   providers: [LibraryService],
   imports: [
     ConfigModule,
+    HostModule,
     MongooseModule.forFeature([
       {
         name: Library.name,
