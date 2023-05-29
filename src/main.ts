@@ -19,7 +19,7 @@ async function bootstrap() {
   );
 
   const config = new DocumentBuilder()
-    .setTitle('SISTEMA DE BUSQUEDA DE CATÁLOGOS EN BIBLIOTECARIOS')
+    .setTitle('SISTEMA DE BÚSQUEDA DE CATÁLOGOS EN BIBLIOTECARIOS')
     .setDescription('API To do some searchings')
     .setVersion('1.0')
     .build();

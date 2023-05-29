@@ -42,7 +42,7 @@ export class LibraryService {
       '/F/?func=find-b&request=' +
       finalKeyWord +
       '&find_code=WRD&adjacent=N&x=32&y=94=WFM&filter_request_4=&filter_code_5=WSL&filter_request_5=';
-    const data = await this.http.get<any>(url).catch(error => resolve('No hay datos para la busqueda realizada'));
+    const data = await this.http.get<any>(url).catch(error => resolve('No hay datos para la búsqueda realizada'));
 
       const nameU = 'poli-jic';
       const universidad = 'Politécnico Colombiano Jaime Isaza Cadavid';
@@ -100,7 +100,7 @@ export class LibraryService {
         };
         resolve(jsonCatalogue);
       } else {
-        resolve('No hay datos para la busqueda realizada');
+        resolve('No hay datos para la búsqueda realizada');
       }
     });
   }
@@ -120,7 +120,7 @@ export class LibraryService {
 
       const nameU = 'udea';
       const universidad = 'Universidad de Antioquia';
-      const data = await this.http.get<any>(url).catch(error => resolve('No hay datos para la busqueda realizada'));
+      const data = await this.http.get<any>(url).catch(error => resolve('No hay datos para la búsqueda realizada'));
       const $ = cheerio.load(data);
       const records = [];
       const totalRecords = $('.number-of-hits font').text();
@@ -155,7 +155,7 @@ export class LibraryService {
         };
         resolve(jsonCatalogue);
       } else {
-        resolve('No hay datos para la busqueda realizada');
+        resolve('No hay datos para la búsqueda realizada');
       }
     });
   }
@@ -176,7 +176,7 @@ export class LibraryService {
       const nameU = 'itm';
       const universidad = 'Instituto Tecnológico Metropolitano';
 
-      const data = await this.http.get<any>(url).catch(error => resolve('No hay datos para la busqueda realizada'));
+      const data = await this.http.get<any>(url).catch(error => resolve('No hay datos para la búsqueda realizada'));
       const $ = cheerio.load(data);
       const records = [];
       const totalRecords = $('.number-of-hits font').text();
@@ -211,7 +211,7 @@ export class LibraryService {
         };
         resolve(jsonCatalogue);
       } else {
-        resolve('No hay datos para la busqueda realizada');
+        resolve('No hay datos para la búsqueda realizada');
       }
     });
   }
@@ -233,7 +233,7 @@ export class LibraryService {
       const universidad = 'Universidad de San Buenaventura';
 
       try {
-        const data = await this.http.get<any>(url).catch(error => resolve('No hay datos para la busqueda realizada'));
+        const data = await this.http.get<any>(url).catch(error => resolve('No hay datos para la búsqueda realizada'));
         const $ = cheerio.load(data);
         const records = [];
         const totalRecords = $('.number-of-hits font').text();
@@ -268,7 +268,7 @@ export class LibraryService {
           };
           resolve(jsonCatalogue);
         } else {
-          resolve('No hay datos para la busqueda realizada');
+          resolve('No hay datos para la búsqueda realizada');
         }
       } catch (error) {
         this.handleExceptions(error);
@@ -290,7 +290,7 @@ export class LibraryService {
       const universidad =
         'Institución Universitaria Politécnico Grancolombiano';
 
-      const data = await this.http.get<any>(url).catch(error => resolve('No hay datos para la busqueda realizada'));
+      const data = await this.http.get<any>(url).catch(error => resolve('No hay datos para la búsqueda realizada'));
       const $ = cheerio.load(data);
       const records = [];
       const totalR = $('#numresults strong').text();
@@ -333,7 +333,7 @@ export class LibraryService {
         };
         resolve(jsonCatalogue);
       } else {
-        resolve('No hay datos para la busqueda realizada');
+        resolve('No hay datos para la búsqueda realizada');
       }
     });
   }
@@ -355,7 +355,7 @@ export class LibraryService {
       const nameU = 'ceipa';
       const universidad = 'Ceipa';
 
-      const data = await this.http.get<any>(url).catch(error => resolve('No hay datos para la busqueda realizada'));
+      const data = await this.http.get<any>(url).catch(error => resolve('No hay datos para la búsqueda realizada'));
       const $ = cheerio.load(data);
       const records = [];
 
@@ -402,7 +402,7 @@ export class LibraryService {
         };
         resolve(jsonCatalogue);
       } else {
-        resolve('No hay datos para la busqueda realizada');
+        resolve('No hay datos para la búsqueda realizada');
       }
     });
   }
@@ -418,7 +418,7 @@ export class LibraryService {
 
       const nameU = 'colegiatura';
       const universidad = 'COLEGIATURA';
-      const data = await this.http.get<any>(url).catch(error => resolve('No hay datos para la busqueda realizada'));
+      const data = await this.http.get<any>(url).catch(error => resolve('No hay datos para la búsqueda realizada'));
       const $ = cheerio.load(data);
       const records = [];
       const totalR = $('#numresults strong').text();
@@ -461,7 +461,7 @@ export class LibraryService {
         };
         resolve(jsonCatalogue);
       } else {
-        resolve('No hay datos para la busqueda realizada');
+        resolve('No hay datos para la búsqueda realizada');
       }
     });
   }
@@ -481,7 +481,7 @@ export class LibraryService {
 
       const nameU = 'unal';
       const universidad = 'Universidad Nacional de Colombia';
-      const data = await this.http.get<any>(url).catch(error => resolve('No hay datos para la busqueda realizada'));
+      const data = await this.http.get<any>(url).catch(error => resolve('No hay datos para la búsqueda realizada'));
       const $ = cheerio.load(data);
       const records = [];
       const totalRecords = $('.text3[width="20%"]')
@@ -536,7 +536,7 @@ export class LibraryService {
         };
         resolve(jsonCatalogue);
       } else {
-        resolve('No hay datos para la busqueda realizada');
+        resolve('No hay datos para la búsqueda realizada');
       }
     });
   }
