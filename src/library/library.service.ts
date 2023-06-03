@@ -27,7 +27,6 @@ export class LibraryService {
 
   async getHostUrl(id: string) {
     const url = await (await this.hostService.findOne(id)).hostUrl;
-    console.log(url);
     return url;
   }
 
@@ -45,62 +44,65 @@ export class LibraryService {
       const data = await this.http
         .get<any>(url)
         .catch((error) => resolve('No hay datos para la búsqueda realizada'));
+      if (data) {
+        const nameU = 'poli-jic';
+        const universidad = 'Politécnico Colombiano Jaime Isaza Cadavid';
+        const $ = cheerio.load(data);
 
-      const nameU = 'poli-jic';
-      const universidad = 'Politécnico Colombiano Jaime Isaza Cadavid';
-      const $ = cheerio.load(data);
-
-      const records = [];
-      const totalRecords = $('.text3[width="20%"]')
-        .text()
-        .trim()
-        .substring(38, 44)
-        .trim();
-
-      $("table[cellspacing='2'] tr[valign='baseline']").each((i, element) => {
-        const rank = i + 1;
-
-        const titleStartingPosition = $(element)
-          .find('td.td1:nth-child(5)')
-          .html()
+        const records = [];
+        const totalRecords = $('.text3[width="20%"]')
+          .text()
           .trim()
-          .indexOf('=');
+          .substring(38, 44)
+          .trim();
 
-        const titleFinalPosition = $(element)
-          .find('td.td1:nth-child(5)')
-          .html()
-          .trim()
-          .indexOf(';');
+        $("table[cellspacing='2'] tr[valign='baseline']").each((i, element) => {
+          const rank = i + 1;
 
-        const title = $(element)
-          .find('td.td1:nth-child(5)')
-          .html()
-          .trim()
-          .substring(titleStartingPosition + 2, titleFinalPosition - 1);
+          const titleStartingPosition = $(element)
+            .find('td.td1:nth-child(5)')
+            .html()
+            .trim()
+            .indexOf('=');
 
-        const autor = $(element).find('td.td1:nth-child(3)').text().trim();
+          const titleFinalPosition = $(element)
+            .find('td.td1:nth-child(5)')
+            .html()
+            .trim()
+            .indexOf(';');
 
-        const link = $(element).find('td.td1:nth-child(1) a').attr('href');
+          const title = $(element)
+            .find('td.td1:nth-child(5)')
+            .html()
+            .trim()
+            .substring(titleStartingPosition + 2, titleFinalPosition - 1);
 
-        const metadata = {
-          rank: rank,
-          title: title,
-          author: autor,
-          detail: link,
-        };
+          const autor = $(element).find('td.td1:nth-child(3)').text().trim();
 
-        records.push(metadata);
-      });
+          const link = $(element).find('td.td1:nth-child(1) a').attr('href');
 
-      if (records.length != 0) {
-        const jsonCatalogue = {
-          url,
-          totalRecords,
-          nameU,
-          records,
-          universidad,
-        };
-        resolve(jsonCatalogue);
+          const metadata = {
+            rank: rank,
+            title: title,
+            author: autor,
+            detail: link,
+          };
+
+          records.push(metadata);
+        });
+
+        if (records.length != 0) {
+          const jsonCatalogue = {
+            url,
+            totalRecords,
+            nameU,
+            records,
+            universidad,
+          };
+          resolve(jsonCatalogue);
+        } else {
+          resolve('No hay datos para la búsqueda realizada');
+        }
       } else {
         resolve('No hay datos para la búsqueda realizada');
       }
@@ -125,123 +127,7 @@ export class LibraryService {
       const data = await this.http
         .get<any>(url)
         .catch((error) => resolve('No hay datos para la búsqueda realizada'));
-      const $ = cheerio.load(data);
-      const records = [];
-      const totalRecords = $('.number-of-hits font').text();
-
-      $('.hitlist-alt tr').each((i, element) => {
-        const rank = i;
-
-        const title = $(element).find('.resultsbright').text();
-
-        const autor = $(element).find('.extras i').text();
-
-        const link = $(element).find('.resultsbright a').attr('href');
-
-        const detail = hostUrl + link;
-        if (i > 0) {
-          const metadata = {
-            rank: rank,
-            title: title,
-            author: autor,
-            detail: detail,
-          };
-          records.push(metadata);
-        }
-      });
-      if (records.length != 0) {
-        const jsonCatalogue = {
-          url,
-          totalRecords,
-          nameU,
-          records,
-          universidad,
-        };
-        resolve(jsonCatalogue);
-      } else {
-        resolve('No hay datos para la búsqueda realizada');
-      }
-    });
-  }
-
-  async getCatalogueItm(finalKeyWord: string) {
-    return new Promise(async (resolve, reject) => {
-      if (!finalKeyWord) {
-        return reject('Invalid data');
-      }
-      const hostUrl = await this.getHostUrl('6473f21a0bd4cdc48deb517d');
-
-      const url =
-        hostUrl +
-        '/cgi-olib/?keyword=' +
-        finalKeyWord +
-        '&session=77447134&nh=20&infile=presearch.glue';
-
-      const nameU = 'itm';
-      const universidad = 'Instituto Tecnológico Metropolitano';
-
-      const data = await this.http
-        .get<any>(url)
-        .catch((error) => resolve('No hay datos para la búsqueda realizada'));
-      const $ = cheerio.load(data);
-      const records = [];
-      const totalRecords = $('.number-of-hits font').text();
-
-      $('.hitlist-alt tr').each((i, element) => {
-        const rank = i;
-
-        const title = $(element).find('.resultsbright').text();
-
-        const autor = $(element).find('.extras i').text();
-
-        const link = $(element).find('.resultsbright a').attr('href');
-
-        const detail = hostUrl + link;
-        if (i > 0) {
-          const metadata = {
-            rank: rank,
-            title: title,
-            author: autor,
-            detail: detail,
-          };
-          records.push(metadata);
-        }
-      });
-      if (records.length != 0) {
-        const jsonCatalogue = {
-          url,
-          totalRecords,
-          nameU,
-          records,
-          universidad,
-        };
-        resolve(jsonCatalogue);
-      } else {
-        resolve('No hay datos para la búsqueda realizada');
-      }
-    });
-  }
-
-  async getCatalogueSanbuena(finalKeyWord: string) {
-    return new Promise(async (resolve, reject) => {
-      if (!finalKeyWord) {
-        return reject('Invalid data');
-      }
-      const hostUrl = 'http://opac.biblioteca.usbmed.edu.co';
-
-      const url =
-        hostUrl +
-        '/catalogo?keyword=' +
-        finalKeyWord +
-        '&session=98864653&nh=20&infile=presearch.glue';
-
-      const nameU = 'buenaventura';
-      const universidad = 'Universidad de San Buenaventura';
-
-      try {
-        const data = await this.http
-          .get<any>(url)
-          .catch((error) => resolve('No hay datos para la búsqueda realizada'));
+      if (data) {
         const $ = cheerio.load(data);
         const records = [];
         const totalRecords = $('.number-of-hits font').text();
@@ -278,8 +164,132 @@ export class LibraryService {
         } else {
           resolve('No hay datos para la búsqueda realizada');
         }
-      } catch (error) {
-        this.handleExceptions(error);
+      } else {
+        resolve('No hay datos para la búsqueda realizada');
+      }
+    });
+  }
+
+  async getCatalogueItm(finalKeyWord: string) {
+    return new Promise(async (resolve, reject) => {
+      if (!finalKeyWord) {
+        return reject('Invalid data');
+      }
+      const hostUrl = await this.getHostUrl('6473f21a0bd4cdc48deb517d');
+
+      const url =
+        hostUrl +
+        '/cgi-olib/?keyword=' +
+        finalKeyWord +
+        '&session=77447134&nh=20&infile=presearch.glue';
+
+      const nameU = 'itm';
+      const universidad = 'Instituto Tecnológico Metropolitano';
+
+      const data = await this.http
+        .get<any>(url)
+        .catch((error) => resolve('No hay datos para la búsqueda realizada'));
+      if (data) {
+        const $ = cheerio.load(data);
+        const records = [];
+        const totalRecords = $('.number-of-hits font').text();
+
+        $('.hitlist-alt tr').each((i, element) => {
+          const rank = i;
+
+          const title = $(element).find('.resultsbright').text();
+
+          const autor = $(element).find('.extras i').text();
+
+          const link = $(element).find('.resultsbright a').attr('href');
+
+          const detail = hostUrl + link;
+          if (i > 0) {
+            const metadata = {
+              rank: rank,
+              title: title,
+              author: autor,
+              detail: detail,
+            };
+            records.push(metadata);
+          }
+        });
+        if (records.length != 0) {
+          const jsonCatalogue = {
+            url,
+            totalRecords,
+            nameU,
+            records,
+            universidad,
+          };
+          resolve(jsonCatalogue);
+        } else {
+          resolve('No hay datos para la búsqueda realizada');
+        }
+      } else {
+        resolve('No hay datos para la búsqueda realizada');
+      }
+    });
+  }
+
+  async getCatalogueSanbuena(finalKeyWord: string) {
+    return new Promise(async (resolve, reject) => {
+      if (!finalKeyWord) {
+        return reject('Invalid data');
+      }
+      const hostUrl = 'http://opac.biblioteca.usbmed.edu.co';
+
+      const url =
+        hostUrl +
+        '/catalogo?keyword=' +
+        finalKeyWord +
+        '&session=98864653&nh=20&infile=presearch.glue';
+
+      const nameU = 'buenaventura';
+      const universidad = 'Universidad de San Buenaventura';
+
+      const data = await this.http
+        .get<any>(url)
+        .catch((error) => resolve('No hay datos para la búsqueda realizada'));
+      if (data) {
+        const $ = cheerio.load(data);
+        const records = [];
+        const totalRecords = $('.number-of-hits font').text();
+
+        $('.hitlist-alt tr').each((i, element) => {
+          const rank = i;
+
+          const title = $(element).find('.resultsbright').text();
+
+          const autor = $(element).find('.extras i').text();
+
+          const link = $(element).find('.resultsbright a').attr('href');
+
+          const detail = hostUrl + link;
+          if (i > 0) {
+            const metadata = {
+              rank: rank,
+              title: title,
+              author: autor,
+              detail: detail,
+            };
+            records.push(metadata);
+          }
+        });
+        if (records.length != 0) {
+          const jsonCatalogue = {
+            url,
+            totalRecords,
+            nameU,
+            records,
+            universidad,
+          };
+          resolve(jsonCatalogue);
+        } else {
+          resolve('No hay datos para la búsqueda realizada');
+        }
+      } else {
+        resolve('No hay datos para la búsqueda realizada');
       }
     });
   }
@@ -301,47 +311,51 @@ export class LibraryService {
       const data = await this.http
         .get<any>(url)
         .catch((error) => resolve('No hay datos para la búsqueda realizada'));
-      const $ = cheerio.load(data);
-      const records = [];
-      const totalR = $('#numresults strong').text();
+      if (data) {
+        const $ = cheerio.load(data);
+        const records = [];
+        const totalR = $('#numresults strong').text();
 
-      let totalRecords;
-      if (totalR) {
-        totalRecords = totalR.match(/\d+/g).join(' ');
-      } else {
-        totalRecords = '';
-      }
+        let totalRecords;
+        if (totalR) {
+          totalRecords = totalR.match(/\d+/g).join(' ');
+        } else {
+          totalRecords = '';
+        }
 
-      $('.bibliocol').each((i, element) => {
-        const rank = $(element).prev().text();
+        $('.bibliocol').each((i, element) => {
+          const rank = $(element).prev().text();
 
-        const title = $(element).find('.title').text();
+          const title = $(element).find('.title').text();
 
-        const autor = $(element).find('.author').text();
+          const autor = $(element).find('.author').text();
 
-        const link = $(element).find('a').attr('href');
+          const link = $(element).find('a').attr('href');
 
-        const detail =
-          hostUrl + link + '&query_desc=kw%2Cwrdl%3A%20' + finalKeyWord + ' ';
+          const detail =
+            hostUrl + link + '&query_desc=kw%2Cwrdl%3A%20' + finalKeyWord + ' ';
 
-        const metadata = {
-          rank: rank,
-          title: title,
-          author: autor,
-          detail: detail,
-        };
+          const metadata = {
+            rank: rank,
+            title: title,
+            author: autor,
+            detail: detail,
+          };
 
-        records.push(metadata);
-      });
-      if (records.length != 0) {
-        const jsonCatalogue = {
-          url,
-          totalRecords,
-          nameU,
-          records,
-          universidad,
-        };
-        resolve(jsonCatalogue);
+          records.push(metadata);
+        });
+        if (records.length != 0) {
+          const jsonCatalogue = {
+            url,
+            totalRecords,
+            nameU,
+            records,
+            universidad,
+          };
+          resolve(jsonCatalogue);
+        } else {
+          resolve('No hay datos para la búsqueda realizada');
+        }
       } else {
         resolve('No hay datos para la búsqueda realizada');
       }
@@ -367,51 +381,55 @@ export class LibraryService {
       const data = await this.http
         .get<any>(url)
         .catch((error) => resolve('No hay datos para la búsqueda realizada'));
-      const $ = cheerio.load(data);
-      const records = [];
+      if (data) {
+        const $ = cheerio.load(data);
+        const records = [];
 
-      $("form center table[border='0']").each((i, element) => {
-        const rank = i + 1;
+        $("form center table[border='0']").each((i, element) => {
+          const rank = i + 1;
 
-        const title = $(element)
-          .find('td[width="660"] .Estilo17')
-          .text()
-          .trim();
+          const title = $(element)
+            .find('td[width="660"] .Estilo17')
+            .text()
+            .trim();
 
-        const autor = $(element)
-          .find('td[width="660"]')
-          .parent()
-          .next()
-          .children('.Estilo30')
-          .text()
-          .trim();
+          const autor = $(element)
+            .find('td[width="660"]')
+            .parent()
+            .next()
+            .children('.Estilo30')
+            .text()
+            .trim();
 
-        const link = $(element)
-          .find('a[target="_blank"]:nth-child(3)')
-          .attr('href')
-          .trim();
+          const link = $(element)
+            .find('a[target="_blank"]:nth-child(3)')
+            .attr('href')
+            .trim();
 
-        const detail = hostUrl + link + ' ';
+          const detail = hostUrl + link + ' ';
 
-        const metadata = {
-          rank: rank,
-          title: title,
-          author: autor,
-          detail: detail,
-        };
+          const metadata = {
+            rank: rank,
+            title: title,
+            author: autor,
+            detail: detail,
+          };
 
-        records.push(metadata);
-      });
-      const totalRecords = records.length;
-      if (records.length != 0) {
-        const jsonCatalogue = {
-          url,
-          totalRecords,
-          nameU,
-          records,
-          universidad,
-        };
-        resolve(jsonCatalogue);
+          records.push(metadata);
+        });
+        const totalRecords = records.length;
+        if (records.length != 0) {
+          const jsonCatalogue = {
+            url,
+            totalRecords,
+            nameU,
+            records,
+            universidad,
+          };
+          resolve(jsonCatalogue);
+        } else {
+          resolve('No hay datos para la búsqueda realizada');
+        }
       } else {
         resolve('No hay datos para la búsqueda realizada');
       }
@@ -432,47 +450,51 @@ export class LibraryService {
       const data = await this.http
         .get<any>(url)
         .catch((error) => resolve('No hay datos para la búsqueda realizada'));
-      const $ = cheerio.load(data);
-      const records = [];
-      const totalR = $('#numresults strong').text();
+      if (data) {
+        const $ = cheerio.load(data);
+        const records = [];
+        const totalR = $('#numresults strong').text();
 
-      let totalRecords;
-      if (totalR) {
-        totalRecords = totalR.match(/\d+/g).join(' ');
-      } else {
-        totalRecords = '';
-      }
+        let totalRecords;
+        if (totalR) {
+          totalRecords = totalR.match(/\d+/g).join(' ');
+        } else {
+          totalRecords = '';
+        }
 
-      $('.bibliocol').each((i, element) => {
-        const rank = $(element).prev().text();
+        $('.bibliocol').each((i, element) => {
+          const rank = $(element).prev().text();
 
-        const title = $(element).find('.title').text();
+          const title = $(element).find('.title').text();
 
-        const autor = $(element).find('.author').text();
+          const autor = $(element).find('.author').text();
 
-        const link = $(element).find('a').attr('href');
+          const link = $(element).find('a').attr('href');
 
-        const detail =
-          hostUrl + link + '&query_desc=kw%2Cwrdl%3A%20' + finalKeyWord + ' ';
+          const detail =
+            hostUrl + link + '&query_desc=kw%2Cwrdl%3A%20' + finalKeyWord + ' ';
 
-        const metadata = {
-          rank: rank,
-          title: title,
-          author: autor,
-          detail: detail,
-        };
+          const metadata = {
+            rank: rank,
+            title: title,
+            author: autor,
+            detail: detail,
+          };
 
-        records.push(metadata);
-      });
-      if (records.length != 0) {
-        const jsonCatalogue = {
-          url,
-          totalRecords,
-          nameU,
-          records,
-          universidad,
-        };
-        resolve(jsonCatalogue);
+          records.push(metadata);
+        });
+        if (records.length != 0) {
+          const jsonCatalogue = {
+            url,
+            totalRecords,
+            nameU,
+            records,
+            universidad,
+          };
+          resolve(jsonCatalogue);
+        } else {
+          resolve('No hay datos para la búsqueda realizada');
+        }
       } else {
         resolve('No hay datos para la búsqueda realizada');
       }
@@ -497,59 +519,63 @@ export class LibraryService {
       const data = await this.http
         .get<any>(url)
         .catch((error) => resolve('No hay datos para la búsqueda realizada'));
-      const $ = cheerio.load(data);
-      const records = [];
-      const totalRecords = $('.text3[width="20%"]')
-        .text()
-        .trim()
-        .substring(38, 44)
-        .trim();
-
-      $("table[cellspacing='2'] tr[valign='baseline']").each((i, element) => {
-        const rank = i + 1;
-
-        const titleStartingPosition = $(element)
-          .find('td.td1:nth-child(5)')
-          .html()
+      if (data) {
+        const $ = cheerio.load(data);
+        const records = [];
+        const totalRecords = $('.text3[width="20%"]')
+          .text()
           .trim()
-          .indexOf('=');
+          .substring(38, 44)
+          .trim();
 
-        const titleFinalPosition = $(element)
-          .find('td.td1:nth-child(5)')
-          .html()
-          .trim()
-          .indexOf('recordLink');
+        $("table[cellspacing='2'] tr[valign='baseline']").each((i, element) => {
+          const rank = i + 1;
 
-        const titlePre = $(element)
-          .find('td.td1:nth-child(5)')
-          .html()
-          .trim()
-          .substring(titleStartingPosition + 3, titleFinalPosition - 3);
+          const titleStartingPosition = $(element)
+            .find('td.td1:nth-child(5)')
+            .html()
+            .trim()
+            .indexOf('=');
 
-        const title = titlePre.replace(/&nbsp;/g, ' ');
+          const titleFinalPosition = $(element)
+            .find('td.td1:nth-child(5)')
+            .html()
+            .trim()
+            .indexOf('recordLink');
 
-        const autor = $(element).find('td.td1:nth-child(3)').text().trim();
+          const titlePre = $(element)
+            .find('td.td1:nth-child(5)')
+            .html()
+            .trim()
+            .substring(titleStartingPosition + 3, titleFinalPosition - 3);
 
-        const link = $(element).find('td.td1:nth-child(1) a').attr('href');
+          const title = titlePre.replace(/&nbsp;/g, ' ');
 
-        const metadata = {
-          rank: rank,
-          title: title,
-          author: autor,
-          detail: link,
-        };
+          const autor = $(element).find('td.td1:nth-child(3)').text().trim();
 
-        records.push(metadata);
-      });
-      if (records.length != 0) {
-        const jsonCatalogue = {
-          url,
-          totalRecords,
-          nameU,
-          records,
-          universidad,
-        };
-        resolve(jsonCatalogue);
+          const link = $(element).find('td.td1:nth-child(1) a').attr('href');
+
+          const metadata = {
+            rank: rank,
+            title: title,
+            author: autor,
+            detail: link,
+          };
+
+          records.push(metadata);
+        });
+        if (records.length != 0) {
+          const jsonCatalogue = {
+            url,
+            totalRecords,
+            nameU,
+            records,
+            universidad,
+          };
+          resolve(jsonCatalogue);
+        } else {
+          resolve('No hay datos para la búsqueda realizada');
+        }
       } else {
         resolve('No hay datos para la búsqueda realizada');
       }
