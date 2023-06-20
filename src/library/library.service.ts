@@ -237,15 +237,15 @@ export class LibraryService {
       if (!finalKeyWord) {
         return reject('Invalid data');
       }
-      const hostUrl = 'http://opac.biblioteca.usbmed.edu.co';
+      const hostUrl = await this.getHostUrl('649104635628af551b161c2c');
 
       const url =
         hostUrl +
-        '/catalogo?keyword=' +
+        '/cgi-olibped?keyword=' +
         finalKeyWord +
-        '&session=98864653&nh=20&infile=presearch.glue';
+        '&session=75925206&infile=presearch.glue';
 
-      const nameU = 'buenaventura';
+      const nameU = 'sanbuenaventura';
       const universidad = 'Universidad de San Buenaventura';
 
       const data = await this.http
